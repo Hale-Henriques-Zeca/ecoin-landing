@@ -12,6 +12,27 @@ export default function CalcTabs({
       
       {/* Aba Normal */}
       <button
-        className={`
-          py-3 rounded-lg font-semibold transition-all
-          ${active ===
+        onClick={() => setActive("normal")}
+        className={`py-3 rounded-lg font-semibold transition-all ${
+          active === "normal"
+            ? "bg-gradient-to-r from-yellow-400 to-yellow-600 text-black"
+            : "bg-[#222] text-gray-300 hover:bg-[#333]"
+        }`}
+      >
+        Cálculo Padrão
+      </button>
+
+      {/* Aba Percentual */}
+      <button
+        onClick={() => setActive("percent")}
+        className={`py-3 rounded-lg font-semibold transition-all ${
+          active === "percent"
+            ? "bg-gradient-to-r from-yellow-400 to-yellow-600 text-black"
+            : "bg-[#222] text-gray-300 hover:bg-[#333]"
+        }`}
+      >
+        Cálculo Percentual
+      </button>
+    </div>
+  );
+}
