@@ -1,0 +1,85 @@
+// src/lib/translateVisible.ts
+"use client";
+
+const CACHE_KEY = "EKD_TRANSLATIONS_V3";
+
+function loadCache() {
+  try {
+    return JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveCache(cache) {
+  localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+}
+
+export default async function translateVisibleV3(lang) {
+  console.log("🟦 EKD V3: tradução iniciada…");
+
+  const cache = loadCache();
+  cache[lang] = cache[lang] || {};
+
+  // 1️⃣ Captura todos os textos visíveis
+  const nodes = Array.from(
+    document.querySelectorAll("h1, h2, h3, p, button, a, span, div")
+  ).filter(el => {
+    const r = el.getBoundingClientRect();
+    return r.width > 0 && r.height > 0;
+  });
+
+  const originalTexts = nodes.map(el => el.innerText.trim());
+
+  // 2️⃣ Filtra textos novos (não traduzidos)
+  const newTexts = originalTexts.filter(t => !(t in cache[lang]));
+
+  console.log("🔍 Textos totais:", originalTexts.length);
+  console.log("🆕 Textos novos:", newTexts.length);
+
+  // 3️⃣ Se não há texto novo → apenas aplicar cache
+  if (newTexts.length === 0) {
+    console.log("💾 EKD V3: aplicando cache local…");
+    nodes.forEach(el => {
+      const t = el.innerText.trim();
+      if (cache[lang][t]) el.innerText = cache[lang][t];
+    });
+    return;
+  }
+
+  // 4️⃣ Chamada única para traduzir TODOS textos novos
+  try {
+    console.log("🌐 Enviando batch único → OpenAI…");
+
+    const res = await fetch("/api/translate", {
+      method: "POST",
+      body: JSON.stringify({
+        batch: true,
+        target: lang,
+        text: newTexts
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!data?.translated) throw new Error("Resposta inválida da API");
+
+    // 5️⃣ Salva no cache local
+    newTexts.forEach((t, i) => {
+      cache[lang][t] = data.translated[i];
+    });
+
+    saveCache(cache);
+
+    // 6️⃣ Aplica ao DOM
+    nodes.forEach(el => {
+      const t = el.innerText.trim();
+      if (cache[lang][t]) el.innerText = cache[lang][t];
+    });
+
+    console.log("✅ EKD V3: tradução aplicada com sucesso.");
+
+  } catch (err) {
+    console.error("❌ ERRO na tradução V3:", err);
+  }
+}

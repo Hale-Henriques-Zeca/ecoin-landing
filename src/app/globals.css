@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import "tailwindcss"; 
 
 :root {
   --background: #ffffff;
@@ -19,8 +19,23 @@
   }
 }
 
+/* >>> Background cinematográfico */
 body {
-  background: var(--background);
+  background-color: #000 !important;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  top: 0 !important;
+}
+
+/* >>> Remover lixo do Google Translate caso tenha sobrado */
+.goog-te-banner-frame,
+.goog-logo-link,
+.goog-te-gadget,
+.goog-te-gadget-simple,
+.skiptranslate {
+  display: none !important;
+}
+
+body > .skiptranslate > iframe {
+  display: none !important;
 }

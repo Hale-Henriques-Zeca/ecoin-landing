@@ -1,7 +1,13 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  experimental: {
+    serverActions: true,
+  },
 
-const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    domains: ["flagcdn.com"],
+  },
 };
 
 export default nextConfig;
