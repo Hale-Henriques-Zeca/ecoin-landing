@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import CalcTabs from "./components/CalcTabs";
+// import CalcTabs from "./components/CalcTabs";
 import StandardCalc from "./components/StandardCalc";
 import PercentCalc from "./components/PercentCalc";
 
