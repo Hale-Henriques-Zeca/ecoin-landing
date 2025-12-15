@@ -22,12 +22,19 @@ ChartJS.register(
 
 interface Props {
   history: number[];
-  labels: string[];
-  from: string;
-  to: string;
+  labels?: string[];
+  from?: string;
+  to?: string;
+  rate?: number; // 👈 adicionada para suportar ConverterPage
 }
 
-export default function ChartBox({ history, labels, from, to }: Props) {
+export default function ChartBox({
+  history,
+  labels = [],
+  from = "ECOIN",
+  to = "USD",
+  rate,
+}: Props) {
   if (!history || history.length === 0) {
     return (
       <div className="w-full bg-black/60 border border-yellow-600 rounded-2xl p-6 mt-8 text-center text-gray-400">
@@ -36,8 +43,9 @@ export default function ChartBox({ history, labels, from, to }: Props) {
     );
   }
 
-  const data = {
-    labels,
+    const data = {
+    // ✅ Corrigido: garantir que labels seja sempre string[]
+    labels: labels.length > 0 ? labels : history.map((_, i) => (i + 1).toString()),
     datasets: [
       {
         label: `${from} → ${to}`,
@@ -88,6 +96,15 @@ export default function ChartBox({ history, labels, from, to }: Props) {
       <h2 className="text-yellow-500 text-xl font-semibold mb-4 text-center tracking-wide">
         Taxa de Câmbio — Histórico
       </h2>
+
+      {/* Exibir taxa atual se disponível */}
+      {rate !== undefined && (
+        <p className="text-center text-gray-300 mb-2 text-sm">
+          Taxa atual:{" "}
+          <span className="text-[#D4AF37] font-bold">{rate.toFixed(4)}</span>
+        </p>
+      )}
+
       <Line data={data} options={options} />
     </div>
   );

@@ -1,26 +1,26 @@
 "use client";
 
-import { useState } from "react";
 import CurrencySelector from "./components/CurrencySelector";
 import Keypad from "./components/Keypad";
 import ChartBox from "./components/ChartBox";
-import { currencies } from "./data/currencies";
 import useConversion from "./hooks/useConversion";
 
 export default function ConverterPage() {
-  const [fromCurrency, setFromCurrency] = useState("ECOIN");
-  const [toCurrency, setToCurrency] = useState("USD");
-  const [amount, setAmount] = useState("0");
-
-  const { converted, rate, history } = useConversion({
-    from: fromCurrency,
-    to: toCurrency,
+  const {
+    from,
+    to,
     amount,
-  });
+    rate,
+    result: converted,
+    history,
+    setFrom,
+    setTo,
+    setAmount,
+    swap,
+  } = useConversion();
 
   return (
     <div className="min-h-screen w-full bg-black flex flex-col items-center py-12 text-white">
-      
       {/* Título */}
       <h1 className="text-4xl font-bold text-[#D4AF37] mb-8">
         Conversor Global
@@ -32,8 +32,8 @@ export default function ConverterPage() {
         {/* Seletor FROM */}
         <CurrencySelector
           label="From"
-          currency={fromCurrency}
-          setCurrency={setFromCurrency}
+          currency={from}
+          setCurrency={setFrom}
           amount={amount}
           setAmount={setAmount}
         />
@@ -42,11 +42,7 @@ export default function ConverterPage() {
         <div className="flex justify-center my-3">
           <button
             className="p-2 rounded-full bg-[#D4AF37] text-black font-bold hover:bg-[#bfa536] transition"
-            onClick={() => {
-              setFromCurrency(toCurrency);
-              setToCurrency(fromCurrency);
-              setAmount("0");
-            }}
+            onClick={swap}
           >
             ⇅
           </button>
@@ -55,9 +51,9 @@ export default function ConverterPage() {
         {/* Seletor TO */}
         <CurrencySelector
           label="To"
-          currency={toCurrency}
-          setCurrency={setToCurrency}
-          amount={converted}
+          currency={to}
+          setCurrency={setTo}
+          amount={converted.toFixed(4)}
           readOnly
         />
 
@@ -66,9 +62,13 @@ export default function ConverterPage() {
           <ChartBox history={history} rate={rate} />
         </div>
 
-        {/* Teclado */}
+        {/* TECLADO */}
         <div className="mt-6">
-          <Keypad setAmount={setAmount} />
+          <Keypad
+            onInput={(val) => setAmount((prev) => (prev === "0" ? val : prev + val))}
+            onDelete={() => setAmount((prev) => (prev.length > 1 ? prev.slice(0, -1) : "0"))}
+            onClear={() => setAmount("0")}
+          />
         </div>
       </div>
     </div>

@@ -1,27 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import Keypad from "./Keypad";
 
-export default function PercentCalc() {
+interface CalcProps {
+  expression: string;
+  setExpression: Dispatch<SetStateAction<string>>;
+  result: string;
+}
+
+export default function PercentCalc({
+  expression,
+  setExpression,
+  result,
+}: CalcProps) {
   const [value, setValue] = useState("");
   const [percent, setPercent] = useState("");
-  const [result, setResult] = useState("");
+  const [calcResult, setCalcResult] = useState(result || "");
 
   function calculate() {
     if (!value || !percent) return;
 
     const v = parseFloat(value);
     const p = parseFloat(percent);
-
     const res = (v * p) / 100;
 
-    setResult(res.toFixed(2));
+    const formatted = res.toFixed(2);
+    setCalcResult(formatted);
+    setExpression(`${v} x ${p}%`);
   }
 
   return (
     <div className="w-full flex flex-col gap-6">
-
       {/* INPUTS */}
       <div className="bg-[#0c0c0c] border border-[#333] rounded-xl p-5 shadow-lg">
         <label className="text-gray-300 text-sm">Valor (Base)</label>
@@ -51,10 +61,10 @@ export default function PercentCalc() {
       </div>
 
       {/* RESULTADO */}
-      {result !== "" && (
+      {calcResult !== "" && (
         <div className="bg-black border border-[#333] rounded-xl p-5 shadow-xl">
           <h2 className="text-lg text-gray-300">Resultado:</h2>
-          <p className="text-4xl font-bold text-[#D4AF37] mt-2">{result}</p>
+          <p className="text-4xl font-bold text-[#D4AF37] mt-2">{calcResult}</p>
         </div>
       )}
 
@@ -63,7 +73,6 @@ export default function PercentCalc() {
         <Keypad
           onInput={(val: string) => {
             if (!isNaN(Number(val))) {
-              // Digitos adicionam no campo selecionado
               if (percent.length > 0) {
                 setPercent(percent + val);
               } else {
@@ -74,7 +83,7 @@ export default function PercentCalc() {
             if (val === "C") {
               setValue("");
               setPercent("");
-              setResult("");
+              setCalcResult("");
             }
 
             if (val === "←") {

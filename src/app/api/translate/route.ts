@@ -2,29 +2,18 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { text, target } = await req.json();
+    const { text, targetLang } = await req.json();
 
-    const res = await fetch("https://libretranslate.de/translate", {
-      method: "POST",
-      body: JSON.stringify({
-        q: text,
-        source: "auto",
-        target,
-        format: "text",
-      }),
-      headers: { "Content-Type": "application/json" },
-    });
+    // Simulação de tradução (podes integrar API real mais tarde)
+    const translated = `[${targetLang.toUpperCase()}] ${text}`;
 
-    const data = await res.json();
+    return NextResponse.json({ ok: true, translated }, { status: 200 });
 
-    return NextResponse.json({
-      ok: true,
-      translated: data?.translatedText || text,
-    });
   } catch (err) {
+    console.error("Translation API error:", err);
     return NextResponse.json(
-      { ok: false, translated: text },
-      { status: 200 }
+      { ok: false, translated: "" },
+      { status: 500 }
     );
   }
 }
