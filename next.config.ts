@@ -21,13 +21,15 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  // ✅ Define comportamento do build
+  // ✅ Typescript build rules
   typescript: {
     ignoreBuildErrors: false,
   },
 
-  // ✅ Remove cabeçalho inseguro e ativa modo estrito
+  // ✅ Remove headers inseguros
   poweredByHeader: false,
+
+  // ✅ Ativa modo estrito do React
   reactStrictMode: true,
 };
 
