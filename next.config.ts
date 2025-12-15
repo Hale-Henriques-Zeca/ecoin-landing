@@ -2,17 +2,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // ✅ Corrige o warning: "Expected object, received boolean"
+  // ✅ Corrige serverActions
   experimental: {
-    serverActions: {}, // deve ser um objeto vazio, não "true" ou "false"
+    serverActions: {}, // deve ser objeto, não boolean
   },
 
-  // ✅ Corrige o warning de segurança do "images.domains"
+  // ✅ Corrige images.domains → remotePatterns
   images: {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**", // permite imagens seguras de qualquer domínio (podes restringir depois)
+        hostname: "**",
       },
       {
         protocol: "http",
@@ -21,13 +21,12 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  // ✅ Melhora o desempenho no build e segurança geral
+  // ✅ Define comportamento do build
   typescript: {
     ignoreBuildErrors: false,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+
+  // ✅ Remove cabeçalho inseguro e ativa modo estrito
   poweredByHeader: false,
   reactStrictMode: true,
 };
